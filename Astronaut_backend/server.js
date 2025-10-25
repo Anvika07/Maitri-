@@ -23,10 +23,34 @@ const io = new Server(httpServer, {
 });
 
 const port = process.env.PORT || 3000;
+
+// Middleware to enforce astronaut-only access
+const astronautOnlyMiddleware = (req, res, next) => {
+    // Check if the request is from an astronaut context
+    const userAgent = req.headers['user-agent'] || '';
+    const astronautHeaders = ['mission-control', 'space-station', 'astronaut-terminal'];
+    
+    if (!astronautHeaders.some(header => req.headers[header])) {
+        return res.status(403).json({ 
+            success: false, 
+            message: 'Access Denied: This system is exclusively for certified astronauts only. Please use authorized space mission terminals.',
+            errorCode: 'ASTRONAUT_ACCESS_REQUIRED'
+        });
+    }
+    next();
+};
+
 app.use(express.json());
+// Apply astronaut-only middleware to all routes except health check
+app.use('/api', astronautOnlyMiddleware);
 
 app.get('/', (req, res) => {
-    res.send('Hello World');
+    res.json({ 
+        message: 'MAITRI Astronaut Emotional Intelligence System', 
+        version: '1.0.0',
+        status: 'Mission Ready',
+        access: 'Astronauts Only'
+    });
 });
 
 // Mount auth routes
