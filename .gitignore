@@ -1,0 +1,9 @@
+# Ignore virtual environments and cache
+venv/
+__pycache__/
+*.pyc
+*.pth
+*.pt
+.DS_Store
+Thumbs.db
+*.zip
